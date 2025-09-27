@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MindCare — Student Mental Health Assistant</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Green theme with yellow + orange accents */
+        --bg: #0d1f14;
+        --panel: #143822;
+        --muted: #b5cdbb;
+        --text: #e9f7ec;
+        --accent: #4caf50; /* primary green */
+        --accent-2: #ffc107; /* warm yellow */
+        --highlight: #ff9800; /* orange highlight */
+        --bubble-user: #1f4d2b;
+        --bubble-bot: #10351e;
+        --ring: rgba(76, 175, 80, 0.35);
+        --success: #66bb6a;
+        --danger: #ff7043;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto,
+          sans-serif;
+        color: var(--text);
+        background: radial-gradient(
+            1200px 600px at 80% -10%,
+            rgba(76, 175, 80, 0.2),
+            transparent 40%
+          ),
+          var(--bg);
+      }
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px;
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 340px 1fr;
+      }
+      @media (max-width: 900px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.015)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(6px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 4px 0;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: conic-gradient(from 200deg, var(--accent), var(--accent-2));
+        box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
+      }
+      .title {
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .chip {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        background: rgba(76, 175, 80, 0.15);
+        color: #eafbe8;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+      }
+
+      .features {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .feature {
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .feature i {
+        font-style: normal;
+        opacity: 0.9;
+      }
+
+      .chat {
+        height: 68vh;
+        min-height: 440px;
+        overflow: auto;
+        padding: 4px 4px 12px 4px;
+        scroll-behavior: smooth;
+      }
+      .bubble {
+        max-width: 75%;
+        margin: 10px 0;
+        padding: 12px 14px;
+        line-height: 1.4;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        white-space: pre-wrap;
+      }
+      .bot {
+        background: var(--bubble-bot);
+        border-top-left-radius: 6px;
+      }
+      .user {
+        background: var(--bubble-user);
+        border-top-right-radius: 6px;
+        margin-left: auto;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          var(--accent),
+          var(--accent-2)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        flex: 0 0 auto;
+      }
+      .user .avatar {
+        background: linear-gradient(135deg, #8bc34a, #cddc39);
+      }
+
+      .inputbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 14px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #102718;
+        color: var(--text);
+        outline: none;
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+      }
+      input[type="text"]:focus,
+      textarea:focus {
+        box-shadow: 0 0 0 4px var(--ring);
+        border-color: rgba(76, 175, 80, 0.5);
+      }
+      button {
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: linear-gradient(135deg, var(--accent-2), var(--highlight));
+        color: #1a1a1a;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .kbd {
+        padding: 2px 6px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .loading {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: var(--text);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .footnote {
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+        margin-top: 8px;
+      }
+      .banner {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        border-radius: 12px;
+        background: rgba(76, 175, 80, 0.12);
+        border: 1px solid rgba(76, 175, 80, 0.35);
+        color: #d9f7e4;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+      .back-bar {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 12px;
+      }
+
+      .back-btn {
+        background: linear-gradient(135deg, var(--accent-2), var(--highlight));
+        color: #1a1a1a;
+        font-weight: 600;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        opacity: 0.9;
+        transform: translateX(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Unchanged structure -->
+    <div class="container">
+      <aside class="card">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div class="title">MindCare</div>
+            <div class="muted">Digital mental health support for students</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px">
+          <span class="chip">Empathetic</span>
+          <span class="chip">Multilingual</span>
+          <span class="chip">Crisis-aware</span>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <i>💬</i>
+            <div>
+              <strong>Human-like</strong><br />
+              Warm, brief, and supportive guidance. Detects language
+              automatically.
+            </div>
+          </div>
+          <div class="feature">
+            <i>🛟</i>
+            <div>
+              <strong>Crisis-aware</strong><br />
+              If asked whom to contact, shares India helplines or suggests local
+              emergency help.
+            </div>
+          </div>
+          <div class="feature">
+            <i>🤝</i>
+            <div>
+              <strong>Explore help</strong><br />
+              Peer-to-peer groups, NGOs, anonymous safe space, and self-help
+              tools.
+            </div>
+          </div>
+        </div>
+
+        <div class="banner">
+          Tip: Press <span class="kbd">Enter</span> to send •
+          <span class="kbd">Shift+Enter</span> for a new line
+        </div>
+        <p class="footnote">Made for higher-ed well-being initiatives.</p>
+      </aside>
+
+      <main class="card">
+        <div class="back-bar">
+          <button class="back-btn" onclick="goBack()">Back to Home</button>
+        </div>
+
+        <div
+          id="chat"
+          class="chat"
+          aria-live="polite"
+          aria-label="Chat messages"
+        ></div>
+
+        <div class="inputbar">
+          <textarea
+            id="input"
+            rows="2"
+            placeholder="Type how you feel…"
+          ></textarea>
+          <div class="toolbar">
+            <button id="sendBtn">Send</button>
+            <span id="status" class="status"></span>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
+
+<!-- Theme Toggle Button (placed outside main layout so it doesn't disturb anything) -->
+<button
+  id="themeToggle"
+  style="
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: var(--accent-2);
+    color: #1a1a1a;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.5s ease, color 0.5s ease;
+  "
+>
+  🌙 Night Mode
+</button>
+
+<style>
+  /* Smooth theme transitions */
+  body,
+  .card,
+  .bubble,
+  textarea,
+  input[type="text"],
+  button {
+    transition: background-color 0.5s ease, color 0.5s ease,
+      border-color 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  <style>
+  /* --- DEFAULT THEME: NIGHT MODE --- */
+  /* This is the base theme that loads first. */
+  body {
+    --bg: linear-gradient(135deg, #1a202c, #2d3748); /* dark slate gradient */
+    --panel: #2d3748; /* dark panel */
+    --muted: #a0aec0; /* muted light gray text */
+    --text: #f7fafc; /* off-white for maximum readability */
+    --accent: #2e7d32; /* deep green (used for light mode button) */
+    --accent-2: #ffb300; /* vibrant yellow accent (used for dark mode button) */
+    --highlight: #fb8c00; /* strong orange highlight */
+    --bubble-user: #2c5234; /* dark green for user messages */
+    --bubble-bot: #4a5568; /* medium slate for bot messages */
+    --ring: rgba(255, 179, 0, 0.3);
+
+    background: var(--bg);
+    color: var(--text);
+    font-family: sans-serif; /* Added for demonstration */
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  textarea,
+  input[type="text"] {
+    background: #1a202c;
+    color: var(--text);
+    border: 1px solid #4a5568;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 8px;
+    transition: background-color 0.5s ease, color 0.5s ease,
+      border-color 0.5s ease;
+  }
+
+  .bubble {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+  }
+
+  .card {
+    background: var(--panel);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .chip {
+    background: var(--accent);
+    color: #f7fafc;
+    border-color: #256b2b;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  button {
+    color: #1a1a1a;
+    background: linear-gradient(135deg, var(--accent-2), var(--highlight));
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  .banner {
+    background: rgba(45, 55, 72, 0.5);
+    border: 1px solid #4a5568;
+    color: var(--text);
+    transition: background-color 0.5s ease, color 0.5s ease,
+      border-color 0.5s ease;
+  }
+
+  /* --- TOGGLED THEME: LIGHT MODE (Your Original Code) --- */
+  /* These styles override the defaults when the .light-mode class is added. */
+  body.light-mode {
+    --bg: linear-gradient(135deg, #fff9e6, #fff3b0); /* soft yellow gradient */
+    --panel: #ffffff; /* panels white */
+    --muted: #4b5563; /* visible muted text */
+    --text: #1a1a1a; /* near-black for maximum readability */
+    --bubble-user: #c6f6d5; /* light green for user messages */
+    --bubble-bot: #f5f5f5; /* off-white for bot messages */
+    --ring: rgba(46, 125, 50, 0.3);
+
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  body.light-mode textarea,
+  body.light-mode input[type="text"] {
+    background: #ffffff;
+    color: var(--text);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  body.light-mode .bubble {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* stronger shadow for separation */
+  }
+
+  body.light-mode .card {
+    background: var(--panel);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* subtle panel depth */
+  }
+
+  body.light-mode .chip {
+    background: var(--accent-2);
+    color: #1a1a1a;
+    border-color: #e0b800;
+  }
+
+  body.light-mode button {
+    color: #fff; /* Changed to white for better contrast on green */
+    background: var(--accent); /* Simplified to use single accent */
+  }
+
+  body.light-mode .banner {
+    background: rgba(255, 193, 7, 0.15);
+    border-color: rgba(255, 193, 7, 0.35);
+    color: #1a1a1a;
+  }
+</style>
+
+<script>
+  const toggleBtn = document.getElementById("themeToggle");
+  let isNight = true;
+
+  toggleBtn.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+    isNight = !isNight;
+    toggleBtn.textContent = isNight ? "🌙 Night Mode" : "☀️ Day Mode";
+
+    // Note: The JS logic for the button's own style needs to be adjusted
+    // to match the new CSS variables for a cleaner approach.
+    // The below is a direct interpretation of your original script.
+    if (isNight) {
+      // Style for Night Mode button
+      toggleBtn.style.background =
+        "linear-gradient(135deg, var(--accent-2), var(--highlight))";
+      toggleBtn.style.color = "#1a1a1a";
+    } else {
+      // Style for Day Mode button
+      toggleBtn.style.background = "var(--accent)";
+      toggleBtn.style.color = "#fff";
+    }
+  });
+</script>
